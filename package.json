@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  },
+  "scripts": {
+    "dev": "bash -c \"dx serve --platform web --port 8081 & npx tailwindcss -i ./input.css -o ./assets/tailwind.css --watch n\""
+  }
+}
