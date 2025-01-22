@@ -10,7 +10,10 @@ pub fn AppLayout() -> Element {
     rsx! {
         AuthService {
             Navbar {}
-            Outlet::<Route> {}
+            div {
+                class: "px-4",
+                Outlet::<Route> {}
+            }
         }
     }
 }

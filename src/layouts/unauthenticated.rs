@@ -5,6 +5,9 @@ use crate::Route;
 #[component]
 pub fn UnauthenticatedLayout() -> Element {
     rsx! {
-        Outlet::<Route> {}
+        div {
+            class: "px-4",
+            Outlet::<Route> {}
+        }
     }
 }
