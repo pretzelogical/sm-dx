@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
-use svg_attributes::class;
+use dioxus::logger::tracing;
+use crate::services::auth::{log_in, set_token};
 
 
 #[component]
@@ -37,7 +38,7 @@ pub fn Auth() -> Element {
                         "Password"
                     }
                     input {
-                        r#type: "text",
+                        r#type: "password",
                         id: "password",
                         class: "rounded-lg px-2 dark:bg-slate-200 dark:text-slate-800",
                         oninput: move |e| password.set(e.value()),
@@ -48,6 +49,22 @@ pub fn Auth() -> Element {
                 class: "flex justify-center my-3",
                     button {
                         class: "btn-confirm",
+                        onclick: move |_| {
+                            if is_logging_in() {
+                                spawn(async move {
+                                    let res = log_in(&username().clone(), &password().clone()).await;
+                                    tracing::error!("{}", format!("res: {:#?}", res));
+                                    match res {
+                                        Some(res) => {
+                                            set_token(res.token);
+                                        }
+                                        None => {
+                                            tracing::error!("Failed to log in");
+                                        }
+                                    }
+                                });
+                            };
+                        },
                         "{auth_text}"
                     }
             }
