@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use dioxus::logger::tracing;
-use crate::services::auth::{log_in, set_token};
+use crate::services::auth::{log_in, register, set_token};
 
 
 #[component]
@@ -50,20 +50,23 @@ pub fn Auth() -> Element {
                     button {
                         class: "btn-confirm",
                         onclick: move |_| {
-                            if is_logging_in() {
-                                spawn(async move {
-                                    let res = log_in(&username().clone(), &password().clone()).await;
-                                    tracing::error!("{}", format!("res: {:#?}", res));
-                                    match res {
-                                        Some(res) => {
-                                            set_token(res.token);
-                                        }
-                                        None => {
-                                            tracing::error!("Failed to log in");
-                                        }
+                            spawn(async move {
+                                let res = {
+                                    if is_logging_in() {
+                                        log_in(&username().clone(), &password().clone()).await
+                                    } else {
+                                        register(&username().clone(), &password().clone()).await
                                     }
-                                });
-                            };
+                                };
+                                match res {
+                                    Some(res) => {
+                                        set_token(res.token);
+                                    }
+                                    None => {
+                                        tracing::error!("Failed to log in");
+                                    }
+                                }
+                            });
                         },
                         "{auth_text}"
                     }

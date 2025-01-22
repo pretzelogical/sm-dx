@@ -112,6 +112,33 @@ pub async fn log_in(username: &String, password: &String) -> Option<VerifySessio
     }
 }
 
+pub async fn register(username: &String, password: &String) -> Option<VerifySessionResponse> {
+    let client = unauth_client();
+    let response = client
+        .request(Method::POST, "http://127.0.0.1:8080/auth/register")
+        .json(&serde_json::json!({ "username": username, "password": password }))
+        .send()
+        .await;
+    match response {
+        Ok(response) => {
+            if response.status().is_success() {
+                let session_data = response
+                    .json::<VerifySessionResponse>()
+                    .await;
+                tracing::info!("Session data: {session_data:?}");
+                session_data.ok()
+            } else {
+                None
+            }
+        },
+        Err(error) => {
+            tracing::error!("Failed to register: {error}");
+            None
+        }
+    }
+}
+
+
 #[derive(Debug, Clone)]
 pub struct AuthServiceState {
     pub token: Signal<Option<String>>,
