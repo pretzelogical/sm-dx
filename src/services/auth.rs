@@ -4,6 +4,7 @@ use wasm_bindgen::JsCast;
 use web_sys::window;
 use dioxus::{logger::tracing, prelude::*};
 use crate::services::client::unauth_client;
+use crate::Route;
 
 
 // #[cfg(target_arch = "wasm32")]
@@ -156,6 +157,7 @@ pub fn AuthService(children: Element) -> Element {
             uid: Signal::new(None),
             name: Signal::new(None),
         });
+    let navigator = use_navigator();
     use_effect(move || {
         match get_token() {
             Some(token) => {
@@ -174,7 +176,7 @@ pub fn AuthService(children: Element) -> Element {
                 });
             }
             None => {
-                todo!("Redirect to auth");
+                navigator.push(Route::AuthView{});
             }
         }
     });

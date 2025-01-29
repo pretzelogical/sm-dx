@@ -9,7 +9,7 @@ mod services;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
-enum Route {
+pub enum Route {
     #[layout(UnauthenticatedLayout)]
     #[route("/")]
     AuthView {},
